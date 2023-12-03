@@ -2,7 +2,7 @@ use scraper::Html;
 
 pub struct RadiataScraper {
     url: String,
-    doc: Html,
+    page: Html,
 }
 
 impl RadiataScraper {
@@ -15,7 +15,20 @@ impl RadiataScraper {
         
         RadiataScraper { 
             url, 
-            doc: document 
+            page: document 
         }
     }
+
+    pub fn get_url(&self) -> &String {
+        &self.url
+    }
+
+    pub fn set_url(&mut self, new_url: String) {
+        self.url = new_url;
+    }
+
+    pub fn get_page(&self) -> &Html {
+        &self.page
+    }
+
 }
