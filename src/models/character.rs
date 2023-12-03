@@ -1,15 +1,15 @@
-enum Path {
+pub enum Path {
     Human,
     Fairy,
     Any,
 }
 
-struct RecruimentInfo {
+pub struct RecruimentInfo {
     requirements: Vec<String>,
     directions: Vec<String>,
 }
 
-struct Character {
+pub struct Character {
     name        : String,
     path        : Path,
     recruitment : RecruimentInfo,
@@ -17,9 +17,9 @@ struct Character {
 
 impl Character {
 
-    fn new(name: String, path: Path, requirements: Vec<String>, directions: Vec<String>) -> Character {
+    pub fn new(name: String, path: Path, requirements: Vec<String>, directions: Vec<String>) -> Character {
         let recruitment_info = RecruimentInfo {
-            recruitments,
+            requirements,
             directions,
         };
 
@@ -30,28 +30,28 @@ impl Character {
         }
     }
 
-    fn get_name(&self) -> &String {
+    pub fn get_name(&self) -> &String {
         &self.name
     }
 
-    fn set_name(&mut self, new_name: String) {
-        &self.name = new_name;
+    pub fn set_name(&mut self, new_name: String) {
+        self.name = new_name;
     }
 
-    fn get_path(&self) -> &Path {
+    pub fn get_path(&self) -> &Path {
         &self.path
     }
 
-    fn set_path(&mut self, new_path: String) {
-        &self.path = new_path
+    pub fn set_path(&mut self, new_path: Path) {
+        self.path = new_path
     }
 
-    fn get_recruitment(&self) -> &RecruimentInfo {
+    pub fn get_recruitment(&self) -> &RecruimentInfo {
         &self.recruitment
     }
 
-    fn set_recruitment(&mut self, new_recruitment: RecruimentInfo) {
-        &self.recruitment = new_recruitment
+    pub fn set_recruitment(&mut self, new_recruitment: RecruimentInfo) {
+        self.recruitment = new_recruitment
     }
 
 }
