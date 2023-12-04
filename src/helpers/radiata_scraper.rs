@@ -1,3 +1,4 @@
+use scraper::html::Select;
 use std::collections::HashMap;
 
 use scraper::{Html, Selector};
@@ -37,6 +38,14 @@ impl RadiataScraper {
         self.page = new_page;
     }
 
+    fn update_page(&mut self, new_page_url: String) {
+        let response = reqwest::blocking
+            ::get(new_page_url.clone()).unwrap()
+            .text().unwrap();
+        let new_document_page = Html::parse_document(&response);
+        self.page = new_document_page;
+    }
+
     pub fn get_list_characters(&self, html_tag: Option<&str>, html_class: Option<&str>) -> HashMap<String, String> {
 
         let html_tag = html_tag.unwrap_or("li");
@@ -66,6 +75,37 @@ impl RadiataScraper {
         }
         character_list
         
+    }
+                                        ///wiki/Goo   main            .page__main
+    pub fn get_character_info(&mut self, url: String, html_tag: &str, html_class: &str) {
+        println!("Visitando: {url}");
+
+        self.update_page(url);
+
+        let selector_string = html_tag.to_string() + html_class;
+
+        let selector = Selector::parse(&selector_string).unwrap();
+
+        let html_data = self.page.select(&selector);
+
+        for html_character in html_data {
+            let name = html_character
+                .select(&Selector::parse("span.mw-page-title-main").unwrap())
+                .next()
+                .map(|span| span.text().collect::<String>()).unwrap();
+            
+            //TO DO: Obtencion de Path y RecruimentInfo.
+            let img = html_character
+                .select(&scraper::Selector::parse(r#"td[colspan="2"] a.image"#).unwrap())
+                .next()
+                .and_then(|a| a.value().attr("href"))
+                .map(str::to_owned).unwrap();
+
+            // let 
+            println!("Nombre: {:?}", name);
+            println!("IMG: {:?}", img);
+
+        }
     }
 
 }

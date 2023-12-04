@@ -4,15 +4,17 @@ use crate::helpers::radiata_scraper::RadiataScraper;
 
 
 fn main() {
-    let url = "https://radiata.fandom.com/wiki/Category:Recruitable_Characters";
-    let mut scrap = RadiataScraper::new(url.to_string());
+    let url = "https://radiata.fandom.com";
+    let mut radiata_scraper = RadiataScraper::new(url.to_string()+"/wiki/Category:Recruitable_Characters");
 
-    println!("URL Actual: {}", scrap.get_url());
+    let list = radiata_scraper.get_list_characters(Some("li"),Some(".category-page__member"));
 
-    let list = scrap.get_list_characters(Some("li"),Some(".category-page__member"));
-
-    for (link, nombre) in list {
-        println!("{nombre}: {link}")
-    }
+    for (link, _) in list {
+        let character_page = url.to_string() + &link;
+        
+        radiata_scraper.get_character_info(character_page, "main", ".page__main");
+        break;
+   }
 
 }
+
