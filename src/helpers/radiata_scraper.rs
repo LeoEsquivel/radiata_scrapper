@@ -1,7 +1,9 @@
-use scraper::html::Select;
+use scraper::{html::Select, ElementRef, Element};
 use std::collections::HashMap;
 
 use scraper::{Html, Selector};
+
+use crate::models::character::Path;
 
 pub struct RadiataScraper {
     url: String,
@@ -76,7 +78,9 @@ impl RadiataScraper {
         character_list
         
     }
-                                        ///wiki/Goo   main            .page__main
+
+    
+    //                                /wiki/Goo         main          page__main
     pub fn get_character_info(&mut self, url: String, html_tag: &str, html_class: &str) {
         println!("Visitando: {url}");
 
@@ -101,11 +105,47 @@ impl RadiataScraper {
                 .and_then(|a| a.value().attr("href"))
                 .map(str::to_owned).unwrap();
 
-            // let 
+            let path = html_character
+                .select(&Selector::parse("span#Human_Path_Only b").unwrap())
+                .next()
+                .map(| _ | Path::Human)
+                .or_else(|| html_character.select(&Selector::parse("span#Nonhuman_Path_Only b")
+                    .unwrap())
+                    .next()
+                    .map(|_| Path::Fairy))
+                .unwrap_or(Path::Any);
+
+            let requirements = self.get_ol_data(self.page.clone(), "Requirements".to_string());
+            let directions = self.get_ol_data(self.page.clone(), "Directions".to_string());
+
+
             println!("Nombre: {:?}", name);
             println!("IMG: {:?}", img);
+            println!("PATH: {}", path);
+            println!("{:?}", requirements);
+            println!("{:?}", directions);
+            println!("\n")
+
 
         }
     }
 
+    fn get_ol_data(&self, document: Html, _type: String) -> Vec<String> {
+        let str_h4_selector = "h4 > span.mw-headline[id=\"".to_owned()+&_type+"\"]";
+        let h4_selector = Selector::parse(&str_h4_selector).unwrap();
+        let li_selector = Selector::parse("li").unwrap();
+        
+        let mut list_items = Vec::new();
+        if let Some(h4) = document.select(&h4_selector)
+            .next()
+            .map(|parent| parent.parent_element())
+            .unwrap_or(None) { //Buscamos el primer h4 con el id que enviamos
+            if let Some(ol) = h4.next_sibling_element() {
+                for li in ol.select(&li_selector) {
+                    list_items.push(li.text().collect::<String>());
+                }
+            }
+        } 
+        return list_items;
+    }
 }
