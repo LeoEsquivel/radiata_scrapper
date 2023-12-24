@@ -118,12 +118,23 @@ impl RadiataScraper {
             let requirements = self.get_ol_data(self.page.clone(), "Requirements".to_string());
             let directions = self.get_ol_data(self.page.clone(), "Directions".to_string());
 
+            let affiliation = html_character
+                .select(&Selector::parse("td").unwrap())
+                .filter(|element| element.text().collect::<String>().contains("Affiliation"))
+                .next()
+                .and_then(|sibling| sibling.next_sibling_element())
+                .map(|td| {
+                    println!("{:?}", td.value());
+                    td.text().collect::<String>()
+                });
+
 
             println!("Nombre: {:?}", name);
             println!("IMG: {:?}", img);
             println!("PATH: {}", path);
-            println!("{:?}", requirements);
-            println!("{:?}", directions);
+            println!("REQUIREMENTS: {:?}", requirements);
+            println!("DIRECTIONS: {:?}", directions);
+            println!("AFFILIATION: {:?}", affiliation);
             println!("\n")
 
 
@@ -139,7 +150,7 @@ impl RadiataScraper {
         if let Some(h4) = document.select(&h4_selector)
             .next()
             .map(|parent| parent.parent_element())
-            .unwrap_or(None) { //Buscamos el primer h4 con el id que enviamos
+            .unwrap_or(None) { 
             if let Some(ol) = h4.next_sibling_element() {
                 for li in ol.select(&li_selector) {
                     list_items.push(li.text().collect::<String>());
