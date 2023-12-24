@@ -1,7 +1,20 @@
+use core::fmt;
+
 pub enum Path {
     Human,
     Fairy,
     Any,
+}
+
+impl fmt::Display for Path {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Path::Human => write!(f, "Human"),
+            Path::Fairy => write!(f, "Fairy"),
+            Path::Any => write!(f, "Any")
+
+        }
+    }
 }
 
 pub struct RecruimentInfo {
