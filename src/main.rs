@@ -10,6 +10,10 @@ fn main() {
     let list = radiata_scraper.get_list_characters(Some("li"),Some(".category-page__member"));
 
     for (link, _) in list {
+
+        if link.contains("Category") {
+            continue;
+        }
         let character_page = url.to_string() + &link;
         
         radiata_scraper.get_character_info(character_page, "main", ".page__main");
