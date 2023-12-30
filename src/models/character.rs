@@ -26,13 +26,12 @@ pub struct Character {
     name        : String,
     path        : Path,
     recruitment : RecruimentInfo,
-    affiliation : String,
     image       : String,
 }
 
 impl Character {
 
-    pub fn new(name: String, path: Path, affiliation: String, image: String, requirements: Vec<String>, directions: Vec<String>) -> Character {
+    pub fn new(name: String, path: Path, image: String, requirements: Vec<String>, directions: Vec<String>) -> Character {
         let recruitment_info = RecruimentInfo {
             requirements,
             directions,
@@ -42,7 +41,6 @@ impl Character {
             name,
             path,
             recruitment: recruitment_info,
-            affiliation,
             image
         }
     }

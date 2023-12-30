@@ -118,23 +118,11 @@ impl RadiataScraper {
             let requirements = self.get_ol_data(self.page.clone(), "Requirements".to_string());
             let directions = self.get_ol_data(self.page.clone(), "Directions".to_string());
 
-            let affiliation = html_character
-                .select(&Selector::parse("td").unwrap())
-                .filter(|element| element.text().collect::<String>().contains("Affiliation"))
-                .next()
-                .and_then(|sibling| sibling.next_sibling_element())
-                .map(|td| {
-                    println!("{:?}", td.value());
-                    td.text().collect::<String>()
-                });
-
-
             println!("Nombre: {:?}", name);
             println!("IMG: {:?}", img);
             println!("PATH: {}", path);
             println!("REQUIREMENTS: {:?}", requirements);
             println!("DIRECTIONS: {:?}", directions);
-            println!("AFFILIATION: {:?}", affiliation);
             println!("\n")
 
 
