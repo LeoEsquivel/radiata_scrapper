@@ -18,15 +18,15 @@ impl fmt::Display for Path {
 }
 
 pub struct RecruimentInfo {
-    requirements: Vec<String>,
-    directions: Vec<String>,
+    pub requirements: Vec<String>,
+    pub directions: Vec<String>,
 }
 
 pub struct Character {
-    name        : String,
-    path        : Path,
-    recruitment : RecruimentInfo,
-    image       : String,
+    pub name        : String,
+    pub path        : Path,
+    pub recruitment : RecruimentInfo,
+    pub image       : String,
 }
 
 impl Character {

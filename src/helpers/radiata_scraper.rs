@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use scraper::{Html, Selector};
 
-use crate::models::character::Path;
+use crate::models::character::{Path, Character, RecruimentInfo};
 
 pub struct RadiataScraper {
     url: String,
@@ -81,7 +81,7 @@ impl RadiataScraper {
 
     
     //                                /wiki/Goo         main          page__main
-    pub fn get_character_info(&mut self, url: String, html_tag: &str, html_class: &str) {
+    pub fn get_character_info(&mut self, url: String, html_tag: &str, html_class: &str) -> Character {
         println!("Visitando: {url}");
 
         self.update_page(url);
@@ -90,43 +90,48 @@ impl RadiataScraper {
 
         let selector = Selector::parse(&selector_string).unwrap();
 
-        let html_data = self.page.select(&selector);
+        let mut html_data = self.page.select(&selector);
 
-        for html_character in html_data {
-            let name = html_character
-                .select(&Selector::parse("span.mw-page-title-main").unwrap())
+        let html_character = html_data.next().unwrap();
+
+        let name = html_character
+            .select(&Selector::parse("span.mw-page-title-main").unwrap())
+            .next()
+            .map(|span| span.text().collect::<String>()).unwrap();
+        
+        let image = html_character
+            .select(&scraper::Selector::parse(r#"td[colspan="2"] a.image"#).unwrap())
+            .next()
+            .and_then(|a| a.value().attr("href"))
+            .map(str::to_owned).unwrap();
+
+        let path = html_character
+            .select(&Selector::parse("span#Human_Path_Only b").unwrap())
+            .next()
+            .map(| _ | Path::Human)
+            .or_else(|| html_character.select(&Selector::parse("span#Nonhuman_Path_Only b")
+                .unwrap())
                 .next()
-                .map(|span| span.text().collect::<String>()).unwrap();
-            
-            //TO DO: Obtencion de Path y RecruimentInfo.
-            let img = html_character
-                .select(&scraper::Selector::parse(r#"td[colspan="2"] a.image"#).unwrap())
-                .next()
-                .and_then(|a| a.value().attr("href"))
-                .map(str::to_owned).unwrap();
+                .map(|_| Path::Fairy))
+            .unwrap_or(Path::Any);
 
-            let path = html_character
-                .select(&Selector::parse("span#Human_Path_Only b").unwrap())
-                .next()
-                .map(| _ | Path::Human)
-                .or_else(|| html_character.select(&Selector::parse("span#Nonhuman_Path_Only b")
-                    .unwrap())
-                    .next()
-                    .map(|_| Path::Fairy))
-                .unwrap_or(Path::Any);
+        let requirements = self.get_ol_data(self.page.clone(), "Requirements".to_string());
+        let directions = self.get_ol_data(self.page.clone(), "Directions".to_string());
 
-            let requirements = self.get_ol_data(self.page.clone(), "Requirements".to_string());
-            let directions = self.get_ol_data(self.page.clone(), "Directions".to_string());
+        let recruitment = RecruimentInfo {
+            directions,
+            requirements
+        };
 
-            println!("Nombre: {:?}", name);
-            println!("IMG: {:?}", img);
-            println!("PATH: {}", path);
-            println!("REQUIREMENTS: {:?}", requirements);
-            println!("DIRECTIONS: {:?}", directions);
-            println!("\n")
+        let character = Character {
+            name,
+            image,
+            path,
+            recruitment
+        };
+        
+        character
 
-
-        }
     }
 
     fn get_ol_data(&self, document: Html, _type: String) -> Vec<String> {
