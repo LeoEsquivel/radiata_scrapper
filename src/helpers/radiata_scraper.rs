@@ -1,12 +1,12 @@
-use scraper::{html::Select, ElementRef, Element};
+use scraper::Element;
 use std::collections::HashMap;
 
 use scraper::{Html, Selector};
 
-use crate::models::character::{Path, Character, RecruimentInfo};
+use crate::models::character::{Path, Character};
 
 pub struct RadiataScraper {
-    url: String,
+    // url: String,
     page: Html,
 }
 
@@ -19,26 +19,26 @@ impl RadiataScraper {
         let document = Html::parse_document(&response); 
         
         RadiataScraper { 
-            url, 
+            // url, 
             page: document 
         }
     }
 
-    pub fn get_url(&self) -> &String {
-        &self.url
-    }
+    // pub fn get_url(&self) -> &String {
+    //     &self.url
+    // }
 
-    pub fn set_url(&mut self, new_url: String) {
-        self.url = new_url;
-    }
+    // pub fn set_url(&mut self, new_url: String) {
+    //     self.url = new_url;
+    // }
 
-    pub fn get_page(&self) -> &Html {
-        &self.page
-    }
+    // pub fn get_page(&self) -> &Html {
+    //     &self.page
+    // }
 
-    fn set_page(&mut self, new_page: Html) {
-        self.page = new_page;
-    }
+    // fn set_page(&mut self, new_page: Html) {
+    //     self.page = new_page;
+    // }
 
     fn update_page(&mut self, new_page_url: String) {
         let response = reqwest::blocking
@@ -118,17 +118,8 @@ impl RadiataScraper {
         let requirements = self.get_ol_data(self.page.clone(), "Requirements".to_string());
         let directions = self.get_ol_data(self.page.clone(), "Directions".to_string());
 
-        let recruitment = RecruimentInfo {
-            directions,
-            requirements
-        };
 
-        let character = Character {
-            name,
-            image,
-            path,
-            recruitment
-        };
+        let character = Character::new(name, path, image, requirements, directions);
         
         character
 
