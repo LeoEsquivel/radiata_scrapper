@@ -828,6 +828,8 @@ dependencies = [
  "csv",
  "reqwest",
  "scraper",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
