@@ -24,7 +24,7 @@ fn main() {
         character_list.push(character);
    }
    let radiata_data = RadiataData{};
-   radiata_data.create_csv(character_list);
+   radiata_data.create_json(character_list);
 
 }
 

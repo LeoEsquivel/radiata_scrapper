@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{fs::File, io::Write, path::PathBuf};
 
 use csv::Writer;
 
@@ -31,6 +31,13 @@ impl RadiataData {
             writer.write_record(&[name, &path.to_string(), &recruitment.to_string(), image]).unwrap();
         }
         writer.flush().unwrap();
+    }
+
+    pub fn create_json(&self, data: Vec<Character>) {
+        let json = serde_json::to_string(&data);
+
+        let mut json_file = File::create("characters_info.json").expect("Error al crear el archivo");
+        json_file.write_all(json.unwrap().as_bytes()).expect("No se pudo escribir el archivo");
     }
 
     fn get_data_path(&self) -> PathBuf {

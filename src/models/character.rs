@@ -1,5 +1,7 @@
 use core::fmt;
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize)]
 pub enum Path {
     Human,
     Fairy,
@@ -17,6 +19,7 @@ impl fmt::Display for Path {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct RecruitmentInfo {
     pub requirements: Vec<String>,
     pub directions: Vec<String>,
@@ -30,6 +33,7 @@ impl fmt::Display for RecruitmentInfo {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Character {
     pub name        : String,
     pub path        : Path,
